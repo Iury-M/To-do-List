@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend  # Altere para apontar para a pasta 'backend'
+      dockerfile: Dockerfile  # Opcional, se o nome do Dockerfile for 'Dockerfile'
+    container_name: tarefa-backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/usr/src/app  # Isso garante que o código da pasta 'backend' seja mapeado
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+    networks:
+      - tarefa-network
+
+  db:
+    image: postgres:13
+    container_name: tarefa-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tarefas_db
+    volumes:
+      - tarefa-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tarefa-network
+
+volumes:
+  tarefa-db-data:
+
+networks:
+  tarefa-network:
+    driver: bridge
